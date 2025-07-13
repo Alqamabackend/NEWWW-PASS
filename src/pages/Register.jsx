@@ -3,6 +3,11 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
+   const API_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : import.meta.env.VITE_BACKEND_URL;
+
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
@@ -12,7 +17,8 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
+      // await axios.post("http://localhost:5000/api/auth/register", form);
+      await axios.post(`${API_URL}/api/auth/register`, form);
       alert("Registration successful! Please login.");
       navigate("/login");
     } catch (err) {

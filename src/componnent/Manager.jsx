@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const Manager = () => {
+   const API_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : import.meta.env.VITE_BACKEND_URL;
+
   const [form, setForm] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setPasswordArray] = useState([]);
   const [showPasswordId, setShowPasswordId] = useState(null);
@@ -11,13 +16,23 @@ const Manager = () => {
 
   // ✅ Fetch all passwords with token
   useEffect(() => {
+    const API_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5000"
+    : import.meta.env.VITE_BACKEND_URL;
+
     const fetchPasswords = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/password/all", {
+        // const res = await axios.get("http://localhost:5000/api/password/all", {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
+        const res = await axios.get(`${API_URL}/api/password/all`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
+         });
         setPasswordArray(res.data);
       } catch (error) {
         console.error("Failed to fetch passwords:", error);
@@ -38,8 +53,17 @@ const Manager = () => {
     }
 
     try {
+      // const res = await axios.post(
+      //   "http://localhost:5000/api/password/add",
+      //   form,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
       const res = await axios.post(
-        "http://localhost:5000/api/password/add",
+        `${API_URL}/api/password/add`,
         form,
         {
           headers: {
@@ -61,8 +85,14 @@ const Manager = () => {
     );
     if (!confirmDelete) return;
 
-    try {
-      await axios.delete(`http://localhost:5000/api/password/${id}`, {
+    // try {
+    //   await axios.delete(`http://localhost:5000/api/password/${id}`, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //   });
+      try {
+      await axios.delete(`${API_URL}/api/password/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

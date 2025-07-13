@@ -1,13 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const {
-  addPassword,
-  getPasswords,
-  deletePassword,
-} = require("../controllers/passwordController");
+const auth = require("../middleware/auth");
+const { getAllPasswords, addPassword, deletePassword } = require("../controllers/passwordController");
 
-router.post("/add", addPassword);
-router.get("/all", getPasswords);
-router.delete("/:id", deletePassword);
+// /api/password
+router.get("/all", auth, getAllPasswords);
+router.post("/add", auth, addPassword);
+router.delete("/:id", auth, deletePassword);
 
 module.exports = router;

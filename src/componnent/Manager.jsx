@@ -6,23 +6,31 @@ const Manager = () => {
   const [passwordArray, setPasswordArray] = useState([]);
   const [showPasswordId, setShowPasswordId] = useState(null);
 
-  // Fetch all passwords from backend
+  // ✅ Local storage se token uthao
+  const token = localStorage.getItem("token");
+
+  // ✅ Fetch all passwords with token
   useEffect(() => {
     const fetchPasswords = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/password/all");
+        const res = await axios.get("http://localhost:5000/api/password/all", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setPasswordArray(res.data);
       } catch (error) {
         console.error("Failed to fetch passwords:", error);
       }
     };
     fetchPasswords();
-  }, []);
+  }, [token]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ✅ Save password with token
   const savePassword = async () => {
     if (!form.site || !form.username || !form.password) {
       alert("Please fill all fields!");
@@ -30,7 +38,15 @@ const Manager = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/password/add", form);
+      const res = await axios.post(
+        "http://localhost:5000/api/password/add",
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setPasswordArray([...passwordArray, res.data]);
       setForm({ site: "", username: "", password: "" });
     } catch (error) {
@@ -38,12 +54,19 @@ const Manager = () => {
     }
   };
 
+  // ✅ Delete password with token
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this password?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this password?"
+    );
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/password/${id}`);
+      await axios.delete(`http://localhost:5000/api/password/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const updated = passwordArray.filter((item) => item._id !== id);
       setPasswordArray(updated);
     } catch (error) {

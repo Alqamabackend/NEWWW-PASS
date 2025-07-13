@@ -1,31 +1,25 @@
 const Password = require("../models/Password");
 
-const addPassword = async (req, res) => {
-  const { site, username, password } = req.body;
-  try {
-    const newPass = await Password.create({ site, username, password });
-    res.status(201).json(newPass);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to add password" });
-  }
+const getAllPasswords = async (req, res) => {
+  const passwords = await Password.find({ user: req.user });
+  res.json(passwords);
 };
 
-const getPasswords = async (req, res) => {
-  try {
-    const data = await Password.find();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching passwords" });
-  }
+const addPassword = async (req, res) => {
+  const { site, username, password } = req.body;
+  const newPass = new Password({
+    user: req.user,
+    site,
+    username,
+    password,
+  });
+  await newPass.save();
+  res.json(newPass);
 };
 
 const deletePassword = async (req, res) => {
-  try {
-    await Password.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Deleted" });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting password" });
-  }
+  await Password.findByIdAndDelete(req.params.id);
+  res.json({ message: "Deleted successfully" });
 };
 
-module.exports = {deletePassword , getPasswords, addPassword} 
+module.exports = { getAllPasswords, addPassword, deletePassword}
